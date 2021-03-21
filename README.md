@@ -10,7 +10,7 @@ more infomation please refer to [join-order-benchmark](https://github.com/gregra
     git submodule init
     git submodule update
     # install python dependencies
-    pip install -r requirements
+    pip install -r requirements.txt
     ```
 
 3. Generate `csv_schema.txt` and `all-queries-filtered.sql`
@@ -26,6 +26,5 @@ more infomation please refer to [join-order-benchmark](https://github.com/gregra
 5.  Run main and test
     ```
     python3 main.py
-
     python3 test.py
     ```
