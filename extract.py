@@ -1,4 +1,5 @@
 import glob
+import os
 data_loc = "data/"
 
 
@@ -60,5 +61,7 @@ def extract_join_sql(sql_dir="join-order-benchmark", max_join_size=6):
 
 
 if __name__ == "__main__":
+    if not os.path.exists(data_loc):
+        os.mkdir(data_loc)
     extract_schema_txt()
     extract_join_sql()
