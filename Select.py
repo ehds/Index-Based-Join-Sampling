@@ -1,12 +1,16 @@
 import re
+import DataLoader
 
 
-def perform_selections(query_relations, selects_for_relations):
+def perform_selections(query_relations, selects_for_relations, renames):
     for qr in query_relations:
         for s in selects_for_relations[qr]:
             print('performing select', s, 'for relation', qr)
             # print(query_relations[qr])
-            query_relations[qr] = perform_selection(s, query_relations[qr], qr)
+            df = query_relations[qr]
+            df.columns = [qr + '_' +
+                          c for c in DataLoader.columns[renames[qr]]]
+            query_relations[qr] = perform_selection(df, s)
 
 
 # rename: mapping from abbreviation (like 'ct') to actual relation name (like 'company type')
@@ -80,7 +84,8 @@ def perform_selection(relation, selection_string):
             number = int(value)
             query = attribute + ' == ' + value
             selection = relation.query(query)
-        except ValueError:
+        except:
+            print(attribute, value)
             selection = relation[relation[attribute] == value]
 
         return selection
@@ -115,6 +120,7 @@ def perform_selection(relation, selection_string):
 
         query = attribute + ' > ' + value
         # print('query:', query)
+        print(relation[attribute])
         selection = relation.query(query)
         return selection
 
@@ -145,7 +151,8 @@ def perform_selection(relation, selection_string):
         # print('match string:', match_string)
         # print('attribute:', attribute)
 
-        selection = relation[~relation[attribute].isnull() & relation[attribute].str.match(match_string)]
+        selection = relation[~relation[attribute].isnull(
+        ) & relation[attribute].str.match(match_string)]
         return selection
 
     elif re.match('.*LIKE.*', ss, re.IGNORECASE):
@@ -175,7 +182,8 @@ def perform_selection(relation, selection_string):
             value = '^((?!' + value + ').)*$'
 
         # print(list(relation))
-        selection = relation[~relation[attribute].isnull() & relation[attribute].str.match(value)]
+        selection = relation[~relation[attribute].isnull(
+        ) & relation[attribute].str.match(value)]
         return selection
     elif re.match('.* BETWEEN .*', ss, re.IGNORECASE):
         # print('case BETWEEN')

@@ -35,7 +35,9 @@ def load_csv(name, test=False):
     else:
         tp = pd.read_csv(csv_loc + name + '.csv', iterator=True, chunksize=10000, header=None, escapechar='\\',
                          names=columns[name])
-        df = pd.concat(tp)
+
+    df = pd.concat(tp)
+    print("Load finished")
     df.relation_name = name
     return df
 
@@ -59,7 +61,8 @@ def load_all_csv(test=False):
 
 def get_table_names():
     from os import walk
-    filenames = [f.split('.')[0] for f in next(walk(pkl_loc))[2] if f.split('.')[1] == 'pkl']
+    filenames = [f.split('.')[0] for f in next(walk(pkl_loc))[
+        2] if f.split('.')[1] == 'pkl']
     return filenames
 
 
@@ -71,8 +74,10 @@ if __name__ == "__main__":
     print(is_column_name('person_role_id'))
 
     # Pickle all the files
+    table_names = get_table_names()
+    # print(set(columns.keys())-set(table_names))
     for k in columns.keys():
-        if k in get_table_names():
+        if k in table_names:
             continue
         print('Pickling %s' % k)
         df = load_csv(k)

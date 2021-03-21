@@ -23,8 +23,8 @@ def execute(sql):
     print('tables:')
     for t in renames:
         # print('loading', renames[t], '...')
-        data.load_pickle(renames[t])
-        rel = data.data[renames[t]]['data']
+        rel = data.load_pickle(renames[t])
+        # rel = data.data[renames[t]]['data']
         query_relations[t] = rel
         selects_for_relation[t] = []
 
@@ -36,9 +36,10 @@ def execute(sql):
 
     print('\nselects and sizes:')
     for qr in query_relations:
-        print('table:', qr, ', size:', len(query_relations[qr].index), ', selects:', selects_for_relation[qr])
-
-    Select.perform_selections(query_relations, selects_for_relation)
+        print('table:', qr, ', size:', len(
+            query_relations[qr].index), ', selects:', selects_for_relation[qr])
+    print(selects_for_relation)
+    Select.perform_selections(query_relations, selects_for_relation, renames)
 
     print('sizes after selection:')
     for qr in query_relations:

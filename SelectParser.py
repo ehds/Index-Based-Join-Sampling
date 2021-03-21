@@ -33,7 +33,8 @@ def get_where(sql_stmt):
     statement = sp.parse(sql_stmt)[0]
     joins, selects = [], []
     # rename_map = {}
-    where_token = next((token for token in statement.tokens if isinstance(token, sp.sql.Where)), None)
+    where_token = next(
+        (token for token in statement.tokens if isinstance(token, sp.sql.Where)), None)
 
     if where_token is not None:
         # for t in statement.tokens:
@@ -53,7 +54,7 @@ def get_where(sql_stmt):
         for wp in where_parts:
             # print('old:', wp)
 
-            dots = re.findall('[a-z_]+\.[a-z_]+', wp)
+            dots = re.findall('[a-z0-9_]+\.[a-z_]+', wp)
             # print(wp, dots)
 
             for d in dots:
@@ -115,13 +116,14 @@ def get_where(sql_stmt):
 
         print('\njoins:')
         for j in joins:
-           print(j)
+            print(j)
 
         print('\nselects:')
         for s in selects:
             print(s)
 
     return joins, selects
+
 
 if __name__ == "__main__":
     tests = """SELECT MIN(mc.note) AS production_note, MIN(t.title) AS movie_title, MIN(t.production_year) AS movie_year FROM company_type AS ct, info_type AS it, movie_companies AS mc, movie_info_idx AS mi_idx, title AS t WHERE ct.kind = 'production companies' AND it.info = 'top 250 rank' AND mc.note  not like '%(as Metro-Goldwyn-Mayer Pictures)%' and (mc.note like '%(co-production)%' or mc.note like '%(presents)%') AND ct.id = mc.company_type_id AND t.id = mc.movie_id AND t.id = mi_idx.movie_id AND mc.movie_id = mi_idx.movie_id AND it.id = mi_idx.info_type_id;

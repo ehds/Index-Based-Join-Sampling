@@ -6,9 +6,12 @@ from collections import defaultdict
 
 class QueryGraph:
     def __init__(self, tables, joins, selects, test=False):
-        assert isinstance(tables, dict) and all(isinstance(t[0], str) and isinstance(t[1], str) for t in tables.items())
-        assert isinstance(joins, list) and all(isinstance(j, str) for j in joins)
-        assert isinstance(selects, list) and all(isinstance(s, str) for s in selects)
+        assert isinstance(tables, dict) and all(isinstance(
+            t[0], str) and isinstance(t[1], str) for t in tables.items())
+        assert isinstance(joins, list) and all(
+            isinstance(j, str) for j in joins)
+        assert isinstance(selects, list) and all(
+            isinstance(s, str) for s in selects)
 
         selects_for_relation = defaultdict(list)
         for s in selects:
@@ -28,9 +31,10 @@ class QueryGraph:
             else:
                 df = DataLoader.load_pickle(v)
                 df.columns = [k + '_' + c for c in DataLoader.columns[v]]
-
+                print(df.columns)
                 # Perform selections on the data
                 for s in selects_for_relation[k]:
+                    print(s)
                     df = Select.perform_selection(df, s)
             df.relation_name = k
 
@@ -74,7 +78,8 @@ class QueryGraph:
         return self.V
 
     def get_neighbors(self, R_set):
-        assert isinstance(R_set, frozenset) and all(isinstance(r, Relation) for r in R_set)
+        assert isinstance(R_set, frozenset) and all(
+            isinstance(r, Relation) for r in R_set)
         # print([n for r in R_set for n in r.neighbors])
         # return set().union(*[self.E.get(r, set()) for r in R_set]).difference(R_set)
         return set().union({n for r in R_set for n in r.neighbors}).difference(R_set)
@@ -87,7 +92,8 @@ class Relation:
         self.neighbors = dict()
 
     def _has_index(self, others):
-        assert isinstance(others, frozenset) and all(isinstance(r, Relation) for r in others)
+        assert isinstance(others, frozenset) and all(
+            isinstance(r, Relation) for r in others)
         x = {r: self.neighbors[r] for r in self.neighbors.keys() & set(others)}
         return len(x) > 0, x
 
@@ -116,7 +122,8 @@ class Relation:
         return len(self.df.index)
 
     def __hash__(self):
-        return hash(self.df.relation_name) ^ hash(frozenset(self.df.index))  # ^ hash(self.neighbors)
+        # ^ hash(self.neighbors)
+        return hash(self.df.relation_name) ^ hash(frozenset(self.df.index))
 
     def __eq__(self, other):
         return self.df.equals(other.df) and self.neighbors == other.neighbors

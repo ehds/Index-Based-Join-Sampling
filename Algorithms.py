@@ -22,7 +22,8 @@ def sample_index(S, A, I, n):
         A_keys = [next(iter(x))[0] for x in I.values()]
         S_keys = [next(iter(x))[1] for x in I.values()]
         assert len(A_keys) == len(S_keys)
-        assert all(k in A.columns for k in A_keys) and all(k in S.columns for k in S.columns)
+        assert all(k in A.columns for k in A_keys) and all(
+            k in S.columns for k in S.columns)
 
         # file = open('log.txt', 'w')
 
@@ -65,12 +66,14 @@ def sample_index(S, A, I, n):
         S_out = []
         sid = random.sample(range(_sum), min(n, _sum))
         for id in sid:
-            chosen = max(i for i in range(len(cpt)) if sum(count for (_, count) in cpt[:i]) <= id)
+            chosen = max(i for i in range(len(cpt)) if sum(
+                count for (_, count) in cpt[:i]) <= id)
             assert isinstance(chosen, int)
             tS = cpt[chosen][0]
             offset = id - sum(count for (_, count) in cpt[:chosen])
             assert offset < cpt[chosen][1]
-            ixs = [A_keys[i] + ' == ' + str(tS[k]) for i, k in enumerate(S_keys)]
+            ixs = [A_keys[i] + ' == ' + str(tS[k])
+                   for i, k in enumerate(S_keys)]
             tS = list(tS)
             tA = list(A.query(" & ".join(ixs)).iloc[offset])
             S_out.append(tS + tA)
@@ -79,7 +82,7 @@ def sample_index(S, A, I, n):
 
     # Return the merged samples
     df.relation_name = str([S.relation_name, A.relation_name])
-    return {'df': df, 'matches':_sum}
+    return {'df': df, 'matches': _sum}
 
 
 def estimate_query(G, b, n, max_join_size):
@@ -93,10 +96,12 @@ def estimate_query(G, b, n, max_join_size):
 
     # initialize a progress bar
     widgets = ['> Processed: ', Percentage(), ' ', Bar()]
-    bar = ProgressBar(widgets=widgets, max_value=len(G.get_relations()), redirect_stdout=True).start()
+    bar = ProgressBar(widgets=widgets, maxval=len(
+        G.get_relations())).start()
 
     for size in bar(range(1, min(max_join_size, len(G.get_relations())) + 1)):
-        get_entries_of_size = [(k, v) for (k, v) in samples.items() if len(k) == size]
+        get_entries_of_size = [(k, v)
+                               for (k, v) in samples.items() if len(k) == size]
         random.shuffle(get_entries_of_size)
         for (exp_in, S_in) in get_entries_of_size:
             for R in G.get_neighbors(exp_in):
@@ -113,7 +118,8 @@ def estimate_query(G, b, n, max_join_size):
                         # print('match count:', match_count)
                         # print('estimate of exp_in:', estimates[exp_in])
                         # print('S_out size:', S_out.shape[0])
-                        estimates[exp_out] = match_count * estimates[exp_in] / S_out.shape[0]
+                        estimates[exp_out] = match_count * \
+                            estimates[exp_in] / S_out.shape[0]
                         # print('estimate of exp_out:', estimates[exp_out])
                     else:
                         estimates[exp_out] = 0
@@ -135,7 +141,8 @@ def merge(S, A, I):
     A_keys = [next(iter(x))[0] for x in I.values()]
     S_keys = [next(iter(x))[1] for x in I.values()]
     assert len(A_keys) == len(S_keys)
-    assert all(k in A.columns for k in A_keys) and all(k in S.columns for k in S.columns)
+    assert all(k in A.columns for k in A_keys) and all(
+        k in S.columns for k in S.columns)
     df = S.merge(A, left_on=S_keys, right_on=A_keys, how='inner')
     return df
 
@@ -148,9 +155,11 @@ def calculate_query(G, max_join_size):
 
     # initialize a progress bar
     widgets = ['> Processed: ', Percentage(), ' ', Bar()]
-    bar = ProgressBar(widgets=widgets, max_value=len(G.get_relations())).start()
+    bar = ProgressBar(widgets=widgets, maxval=len(
+        G.get_relations())).start()
     for size in bar(range(1, min(max_join_size, len(G.get_relations())) + 1)):
-        get_entries_of_size = [(k, v) for (k, v) in samples.items() if len(k) == size]
+        get_entries_of_size = [(k, v)
+                               for (k, v) in samples.items() if len(k) == size]
         for (exp_in, S_in) in get_entries_of_size:
             for R in G.get_neighbors(exp_in):
                 exp_out = exp_in | {R}
