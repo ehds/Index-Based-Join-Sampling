@@ -39,10 +39,11 @@ def load_csv(name, test=False):
         df = pd.read_csv(csv_loc + name + '.csv', nrows=10000, header=None, escapechar='\\',
                          names=columns[name])
     else:
-        tp = pd.read_csv(csv_loc + name + '.csv', iterator=True, chunksize=10000, header=None, escapechar='\\',
+        #tp = pd.read_csv(csv_loc + name + '.csv', iterator=True, chunksize=10000, header=None, escapechar='\\',
+        #                 names=columns[name])
+        tp = pd.read_csv(csv_loc + name + '.csv', header=None, escapechar='\\',
                          names=columns[name])
-
-    df = pd.concat(tp)
+    df = tp
     print("Load finished")
     df.relation_name = name
     return df
