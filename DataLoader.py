@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 # CSV files location
 data_loc = 'data/'
@@ -15,6 +16,11 @@ percentages = {
     'person_info': 0.15,
     'title': 0.2
 }
+# Create data directory
+if not os.path.exists(csv_loc):
+    os.mkdir(csv_loc)
+if not os.path.exists(pkl_loc):
+    os.mkdir(pkl_loc)
 
 # Load all the data columns
 columns = dict()
