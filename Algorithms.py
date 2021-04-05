@@ -119,7 +119,7 @@ def estimate_query(G, b, n, max_join_size):
                         # print('estimate of exp_in:', estimates[exp_in])
                         # print('S_out size:', S_out.shape[0])
                         estimates[exp_out] = match_count * \
-                            estimates[exp_in] / S_out.shape[0]
+                            estimates[exp_in] / S_in.shape[0]
                         # print('estimate of exp_out:', estimates[exp_out])
                     else:
                         estimates[exp_out] = 0
